@@ -1,21 +1,28 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { initializeGet } from './reducers/get';
-
-import { Switch, Link } from 'react-router-dom';
+import { Switch } from 'react-router-dom';
 import { renderRoutes } from 'react-router-config';
-import routes from './Routes';
+import routes, { NavLinks } from './Routes';
+import { initUser } from './reducers/userReducer';
+import { getProjects } from './reducers/projectReducer';
 
 const App = (props) => {
+  const init =  async () => {
+    const loggedIn = window.localStorage.getItem('USER');
+    if (loggedIn) {
+      const user = JSON.parse(loggedIn);
+      await props.initUser(user);
+      props.getProjects();
+    }
+  };
+
   useEffect(() => {
-    props.initializeGet();
-  },[props]);
+    init();
+  }, []);
 
   return (
     <div>
-      <Link to="/">Home</Link>
-      <Link to="/about">About</Link>
-
+      <NavLinks />
       <Switch>
         {renderRoutes(routes)}
       </Switch>
@@ -23,4 +30,13 @@ const App = (props) => {
   );
 };
 
-export default connect(null, { initializeGet })(App);
+const mapStateToProps = (state) => {
+  return {
+    user: state.user
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  { initUser, getProjects }
+)(App);

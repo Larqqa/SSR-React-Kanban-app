@@ -1,35 +1,57 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import getService from '../services/get';
-import { addGet } from '../reducers/get';
+import { addProject } from '../reducers/projectReducer';
+import { logout } from '../reducers/userReducer';
+import Login from './Login';
+import Register from './Register';
 
 const Home = (props) => {
-  const handleClick = () => {
-    props.addGet(1);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const obj = {
+      title: e.target.title.value,
+      description: e.target.description.value
+    };
+
+    props.addProject(obj);
   };
 
-  const handleGet = async () => {
-    const data = await getService.getAll();
-    console.log(data);
+  const handleLogout = () => {
+    props.logout();
   };
 
   return (
     <div>
-      <h1>Hello im home moi</h1>
-      <p>clicks on this shizz: {props.clicks} </p>
-      <button onClick={handleClick}>click</button>
-      <button onClick={handleGet}>get</button>
+      {props.user.username ?
+        <>
+          <h1>{props.user.username}</h1>
+          <button onClick={handleLogout}>Logout</button>
+          <form onSubmit={handleSubmit}>
+            <input name="title" />
+            <input name="description" />
+            <button>send</button>
+          </form>
+          {props.projects.map((project, i) => <p key={i}>{project.title}</p>)}
+        </>
+        :
+        <>
+          <Login />
+          <Register />
+        </>
+      }
     </div>
   );
 };
 
 const mapStateToProps = (state) => {
   return {
-    clicks: state,
+    projects: state.projects,
+    user: state.user
   };
 };
 
-const mapDispatchToProps = { addGet };
-
-const h = connect(mapStateToProps, mapDispatchToProps)(Home);
-export default h;
+export default connect(
+  mapStateToProps,
+  { addProject, logout }
+)(Home);

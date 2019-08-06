@@ -1,35 +1,59 @@
+// Server imports
+const config = require('./utils/config');
+const middleware = require('./utils/middleware');
+const logger = require('./utils/logger');
 import express from 'express';
+const app = express();
 import bodyParser from 'body-parser';
 import cors from 'cors';
+const mongoose = require('mongoose');
+import userRouter from './controllers/users';
+import loginRouter from './controllers/login';
+import projectsRouter from './controllers/projects';
+
+// Client imports
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
-import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-
-// Server imports
-import htmlFile from '../public/index.html';
-import getR from './controllers/get';
-
-// React Imports
+import storeInit from '../app/store';
 import App from '../app/App';
-import getRed from '../app/reducers/get';
+import indexHTML from '../public/index.html';
 
-// Create app and set serve folder
-const app = express();
+
+mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true })
+  .then(() => {
+    logger.info('connected to MongoDB');
+  })
+  .catch((error) => {
+    logger.error('error connection to MongoDB:', error.message);
+  });
+
 app.use(cors());
-app.use(express.static('build'));
+
+app.use(
+  express.static(
+    process.env.NODE_ENV === 'development' ?
+      'devBuild'
+      :
+      'build'
+  )
+);
 
 app.use(bodyParser.json());
-app.use('/api/get', getR);
+app.use(middleware.requestLogger);
 
+// Routers
+app.use('/api/user', userRouter);
+app.use('/api/login', loginRouter);
+app.use('/api/projects', projectsRouter);
+
+// Handle serving
 app.get('*', (req, res) => {
 
-  const store = createStore(getRed);
-
   // Create the app with routes
-  const app = renderToString(
-    <Provider store={store}>
+  const appRoot = renderToString(
+    <Provider store={storeInit()}>
       <StaticRouter location={req.url}>
         <App/>
       </StaticRouter>
@@ -37,20 +61,19 @@ app.get('*', (req, res) => {
   );
 
   // Set app and script to index.html 
-  let html = htmlFile
-    .replace('<!-- root -->', app)
-    .replace('<!-- script -->', '/bundle.js')
-    .replace(
-      '<!-- preload -->',
-      `<script id="init">window.__PRELOAD__ = ${JSON.stringify(store.getState()).replace(/</g,'\\u003c')}</script>`);
+  let html = indexHTML
+    .replace('<!-- root -->', appRoot)
+    .replace('<!-- script -->', '/bundle.js');
 
   // Send HTML response
   return res.send(html).end();
 });
 
+app.use(middleware.errorHandler);
+
 // Run server
 const port = 3000;
 app.listen(port, err => {
   if (err) return console.error(err);
-  console.log(`Server listening to: ${port} 😎`);
+  console.log(`Server listening to port: ${port} 😎`);
 });
