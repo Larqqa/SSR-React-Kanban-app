@@ -4,6 +4,7 @@ import { addProject } from '../reducers/projectReducer';
 import { logout } from '../reducers/userReducer';
 import Login from './Login';
 import Register from './Register';
+import Projects from './sub-components/Projects';
 
 const Home = (props) => {
   const handleSubmit = (e) => {
@@ -32,7 +33,7 @@ const Home = (props) => {
             <input name="description" />
             <button>send</button>
           </form>
-          {props.projects.map((project, i) => <p key={i}>{project.title}</p>)}
+          <Projects />
         </>
         :
         <>

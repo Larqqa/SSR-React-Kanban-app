@@ -2,6 +2,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Home from './components/Home';
 import About from './components/About';
+import Projects from './components/sub-components/Projects';
+import Project from './components/Project';
+
 
 const routes = [
   {
@@ -19,6 +22,16 @@ const routes = [
     path: '/about/:id',
     exact: true,
     component: About,
+  },
+  {
+    path: '/projects',
+    exact: true,
+    component: Projects,
+  },
+  {
+    path: '/projects/:id',
+    exact: true,
+    component: Project,
   },
 ];
 

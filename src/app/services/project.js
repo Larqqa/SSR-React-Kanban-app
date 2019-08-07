@@ -15,7 +15,7 @@ const getAll = () => {
   return request.then(response => response.data);
 };
 
-const create = async (project) => {
+const createProject = async (project) => {
   const config = {
     headers: { Authorization: token },
   };
@@ -24,4 +24,22 @@ const create = async (project) => {
   return res.data;
 };
 
-export default { getAll, create, setToken };
+const editTask = async (project) => {
+  const config = {
+    headers: { Authorization: token },
+  };
+
+  const res = await axios.put(baseUrl, project, config);
+  return res.data;
+};
+
+const deleteProject = async (project) => {
+  const config = {
+    headers: { Authorization: token },
+  };
+
+  const res = await axios.delete(`${baseUrl}/${project.id}`, config);
+  return res.data;
+};
+
+export default { getAll, createProject, editTask, setToken, deleteProject };

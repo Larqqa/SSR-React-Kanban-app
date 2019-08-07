@@ -50,6 +50,18 @@ const config = (env, argv) =>  {
             }
           }
         },
+        {
+          test: /\.(css|scss)$/,
+          use: [
+            require.resolve('isomorphic-style-loader'),
+            {
+              loader: 'css-loader'
+            },
+            {
+              loader: 'sass-loader'
+            },
+          ]
+        }
       ],
     },
     plugins: [

@@ -21,7 +21,7 @@ import App from '../app/App';
 import indexHTML from '../public/index.html';
 
 
-mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true })
+mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true, useFindAndModify: false })
   .then(() => {
     logger.info('connected to MongoDB');
   })
@@ -42,6 +42,7 @@ app.use(
 
 app.use(bodyParser.json());
 app.use(middleware.requestLogger);
+app.use(middleware.getBearerToken);
 
 // Routers
 app.use('/api/user', userRouter);

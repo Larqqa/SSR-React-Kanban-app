@@ -6,13 +6,12 @@ const login = async (user) => {
   return res.data;
 };
 
-const logout = async (token) => {
-  const res = await axios.post('/api/login/logout', { token: token });
-  return res.data;
-};
-
 const auth = async (token) => {
-  const res = await axios.post('/api/login/auth', { token: token });
+  const config = {
+    headers: { Authorization: `bearer ${token}` },
+  };
+
+  const res = await axios.get('/api/login/auth', config);
   return res.data;
 };
 
@@ -21,4 +20,4 @@ const register = async (user) => {
   return res.data;
 };
 
-export default { login, logout, auth, register };
+export default { login, auth, register };

@@ -5,6 +5,7 @@ import { renderRoutes } from 'react-router-config';
 import routes, { NavLinks } from './Routes';
 import { initUser } from './reducers/userReducer';
 import { getProjects } from './reducers/projectReducer';
+import './styles/App.scss';
 
 const App = (props) => {
   const init =  async () => {
@@ -32,7 +33,8 @@ const App = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    user: state.user
+    user: state.user,
+    projects: state.projects
   };
 };
 

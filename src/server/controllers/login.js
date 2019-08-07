@@ -28,16 +28,18 @@ loginRouter.post('/', async (req, res, next) => {
     res.status(200).send({
       token,
       username: user.username,
-      name: user.name
+      name: user.name,
+      id: user.id
     });
   } catch (er) {
     next(er);
   }
 });
 
-loginRouter.post('/auth', async (req, res, next) => {
+
+loginRouter.get('/auth', async (req, res, next) => {
   try {
-    jwt.verify(req.body.token, process.env.SECRET);
+    jwt.verify(req.bearerToken, process.env.SECRET);
     res.status(200).end();
   } catch (er) {
     next(er);

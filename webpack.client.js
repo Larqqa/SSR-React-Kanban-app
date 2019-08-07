@@ -56,12 +56,16 @@ const config = (env, argv) =>  {
           },
         },
         {
-          test: /\.scss$/,
-          loaders: ['style-loader', 'css-loader', 'sass-loader'],
-        },
-        {
-          test: /\.css$/,
-          loaders: ['style-loader', 'css-loader'],
+          test: /\.(css|scss)$/,
+          use: [
+            require.resolve('style-loader'),
+            {
+              loader: 'css-loader'
+            },
+            {
+              loader: 'sass-loader'
+            },
+          ]
         }
       ],
     }

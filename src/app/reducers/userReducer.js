@@ -1,6 +1,5 @@
 import userService from '../services/user';
 import projectService from '../services/project';
-import { getProjects } from './projectReducer';
 
 const userReducer = (state = {}, action) => {
   switch (action.type) {
