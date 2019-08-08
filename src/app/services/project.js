@@ -24,10 +24,14 @@ const createProject = async (project) => {
   return res.data;
 };
 
-const editTask = async (project) => {
+const editTask = async (proj) => {
   const config = {
     headers: { Authorization: token },
   };
+
+  const project = proj;
+  project.read = project.read.map(user => user.id ? user.id : user);
+  project.readAndWrite = project.readAndWrite.map(user => user.id ? user.id : user);
 
   const res = await axios.put(baseUrl, project, config);
   return res.data;

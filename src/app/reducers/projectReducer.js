@@ -18,6 +18,8 @@ const reducer = (state = [], action) => {
       project =>
         project.id !== action.data
     );
+  case 'CLEAR_PROJECTS':
+    return [];
   default:
     return state;
   }
@@ -27,7 +29,6 @@ export const getProjects = () => {
   return async dispatch => {
     try {
       const projects = await projectService.getAll();
-
       dispatch({
         type: 'INIT_PROJECTS',
         data: projects,
@@ -80,6 +81,20 @@ export const removeTask = (project) => {
   };
 };
 
+export const editProjectUsers = (project) => {
+  return async dispatch => {
+    try {
+      const editedProject = await projectService.editTask(project);
+      dispatch({
+        type: 'CHANGE_TASK',
+        data: editedProject,
+      });
+    } catch (er) {
+      console.log(er);
+    }
+  };
+};
+
 export const deleteProject = (project) => {
   return dispatch => {
     try {
@@ -91,6 +106,12 @@ export const deleteProject = (project) => {
     } catch (er) {
       console.log(er);
     }
+  };
+};
+
+export const clearProjects = () => {
+  return {
+    type: 'CLEAR_PROJECTS',
   };
 };
 

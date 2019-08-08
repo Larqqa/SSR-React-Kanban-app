@@ -12,8 +12,14 @@ const projectSchema = mongoose.Schema({
     inProg: [],
     done: [],
   },
-  read: [],
-  readAndWrite: [],
+  read: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  readAndWrite: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'

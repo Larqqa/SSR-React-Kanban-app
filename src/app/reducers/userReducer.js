@@ -1,5 +1,6 @@
 import userService from '../services/user';
 import projectService from '../services/project';
+import { getProjects, clearProjects } from './projectReducer';
 
 const userReducer = (state = {}, action) => {
   switch (action.type) {
@@ -43,7 +44,8 @@ export const login = (userInput) => {
   return async dispatch => {
     try {
       const user = await userService.login(userInput);
-      addToLocal(user);
+      await addToLocal(user);
+      dispatch(getProjects());
       dispatch({
         type: 'LOGIN',
         data: user,
@@ -55,9 +57,12 @@ export const login = (userInput) => {
 };
 
 export const logout = () => {
-  window.localStorage.clear();
-  return {
-    type: 'LOGOUT',
+  return async dispatch => {
+    window.localStorage.clear();
+    dispatch(clearProjects());
+    dispatch({
+      type: 'LOGOUT',
+    });
   };
 };
 

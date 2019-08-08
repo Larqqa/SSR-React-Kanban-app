@@ -20,4 +20,9 @@ const register = async (user) => {
   return res.data;
 };
 
-export default { login, auth, register };
+const getUserID = async (username) => {
+  const res = await axios.get(`${baseUrl}/${username}`);
+  return res.data;
+};
+
+export default { login, auth, register, getUserID };

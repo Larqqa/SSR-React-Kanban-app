@@ -14,7 +14,9 @@ projectsRouter.get('/', async (req, res, next) => {
 
     const projects = await Project
       .find({$or:[{user: decodedToken.id}, {readAndWrite: decodedToken.id}, {read: decodedToken.id}]})
-      .populate('user', { username: 1, name: 1 });
+      .populate('user', { username: 1, name: 1 })
+      .populate('read', { username: 1, name: 1 })
+      .populate('readAndWrite', { username: 1, name: 1 });
 
     res.json(projects.map(project => project.toJSON()));
   } catch (exception) {
@@ -67,11 +69,19 @@ projectsRouter.put('/', async (req, res, next) => {
     delete req.body.id;
     delete req.body.user;
 
-    const editedProject = await Project.findByIdAndUpdate(id, req.body, { new: true });
+    console.log(req.body.progress.todo);
 
+    const editedProject = await Project
+      .findByIdAndUpdate(id, req.body, { new: true })
+      .populate('user', { username: 1, name: 1 })
+      .populate('read', { username: 1, name: 1 })
+      .populate('readAndWrite', { username: 1, name: 1 })
+      .exec();
+    
     res.json(editedProject.toJSON());
-  } catch (exception) {
-    next(exception);
+  } catch (ex) {
+    console.log(ex);
+    next(ex);
   }
 });
 

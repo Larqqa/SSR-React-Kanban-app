@@ -39,4 +39,18 @@ usersRouter.post('/', async (req, res, next) => {
   }
 });
 
+usersRouter.get('/:name', async (req, res, next) => {
+  try {
+    const user = await User
+      .findOne({username: req.params.name})
+      .select({id: 1});
+
+    if (user === null) return res.status(400).end();
+
+    res.json(user.id);
+  } catch (exception) {
+    next(exception);
+  }
+});
+
 module.exports = usersRouter;
