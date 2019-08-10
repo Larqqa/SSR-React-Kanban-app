@@ -4,17 +4,16 @@ const loginRouter = require('express').Router();
 const User = require('../models/user');
 
 loginRouter.post('/', async (req, res, next) => {
-  const body = req.body;
   try {
-    const user = await User.findOne({ username: body.username });
+    const user = await User.findOne({ username: req.body.username });
     const passwordCorrect = user === null ?
       false
       :
-      await bcrypt.compare(body.password, user.passwordHash);
+      await bcrypt.compare(req.body.password, user.passwordHash);
 
     if (!(user && passwordCorrect)) {
       return res.status(401).json({
-        error: 'invalid username or password'
+        error: 'Invalid username or password ☠️'
       });
     }
 
@@ -36,12 +35,12 @@ loginRouter.post('/', async (req, res, next) => {
   }
 });
 
-
 loginRouter.get('/auth', async (req, res, next) => {
   try {
     jwt.verify(req.bearerToken, process.env.SECRET);
     res.status(200).end();
   } catch (er) {
+    res.status(401).json({ error: 'Token missing or invalid ☠️' });
     next(er);
   }
 });

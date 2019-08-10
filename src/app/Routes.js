@@ -5,7 +5,6 @@ import About from './components/About';
 import Projects from './components/sub-components/Projects';
 import Project from './components/Project';
 
-
 const routes = [
   {
     path: '/',
@@ -16,7 +15,6 @@ const routes = [
     path: '/about',
     exact: true,
     component: About,
-    data: 'Moi'
   },
   {
     path: '/about/:id',

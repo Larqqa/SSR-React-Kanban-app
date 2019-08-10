@@ -2,35 +2,31 @@ const path = require('path');
 
 const config = (env, argv) =>  {
   const dev = argv.mode === 'development';
-
   return {
 
     // Map source files for better errors
     devtool: 'source-map',
-    entry: ['@babel/polyfill', './src/app/index.js'],
+    entry: [ '@babel/polyfill', './src/app/index.js' ],
     output: {
       path: path.join(__dirname, dev ? './devBuild' : './build'),
       filename: 'bundle.js',
     },
     devServer: {
-
-      // Points to folder with static files
       contentBase: path.join(__dirname, './src/app'),
-
-      // For live reload
       watchContentBase: true,
       compress: true,
 
-      // Enable proxy
-      // Gets data served from express server running on port 3000 
+      // Proxy address points to the express server running on port 3000 
       proxy: [
         {
-          context: ['/'],
+          context: [ '/' ],
           target: 'http://localhost:3000',
           secure: false
         }
       ],
       port: 3001,
+
+      // Show client errors in browser
       overlay: {
         warnings: true,
         errors: true
@@ -40,6 +36,9 @@ const config = (env, argv) =>  {
       rules: [
         {
           test: /\.js$/,
+          exclude: [
+            /node_modules/,
+          ],
           loader: 'babel-loader',
           query: {
             presets: [

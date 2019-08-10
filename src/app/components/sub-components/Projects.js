@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-const Projects = (props) => {
-  const [toggle, setToggle] = useState(true);
+const Projects = ( props ) => {
+  const [ toggle, setToggle ] = useState(true);
 
-  const handleToggle = (e) => {
+  const handleToggleProjects = (e) => {
     if (e.target.name === 'all') {
       setToggle(true);
       document.getElementById('all').classList.add('active');
@@ -32,8 +32,8 @@ const Projects = (props) => {
 
   return (
     <div>
-      <button className="active" name="all" id="all" onClick={handleToggle}>All projects</button>
-      <button className="" name="my" id="my" onClick={handleToggle}>My projects</button>
+      <button className="active" name="all" id="all" onClick={handleToggleProjects}>All projects</button>
+      <button className="" name="my" id="my" onClick={handleToggleProjects}>My projects</button>
       {toggle ?
         <div>
           <h3>All projects</h3>
@@ -42,14 +42,16 @@ const Projects = (props) => {
         :
         <div>
           <h3>My projects</h3>
-          <ProjectsList projects={props.projects.filter(project => project.user.id === props.user.id)}/>
+          <ProjectsList projects={props.projects.filter(
+            project => project.user.id === props.user.id
+          )}/>
         </div>
       }
     </div>
   );
 };
 
-const mapStateToProps = (state) => {
+const mapStateToProps = ( state ) => {
   return {
     user: state.user,
     projects: state.projects,
@@ -58,4 +60,4 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps
-)(Projects);
+)( Projects );

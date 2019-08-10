@@ -5,7 +5,7 @@ const reducer = (state = [], action) => {
   case 'INIT_PROJECTS':
     return action.data;
   case 'ADD_PROJECT':
-    return [...state, action.data];
+    return [ ...state, action.data ];
   case 'CHANGE_TASK':
     return state.map(
       project => project.id === action.data.id ?
@@ -29,6 +29,7 @@ export const getProjects = () => {
   return async dispatch => {
     try {
       const projects = await projectService.getAll();
+
       dispatch({
         type: 'INIT_PROJECTS',
         data: projects,
@@ -43,6 +44,7 @@ export const addProject = (project) => {
   return async dispatch => {
     try {
       const newProject = await projectService.createProject(project);
+
       dispatch({
         type: 'ADD_PROJECT',
         data: newProject,
@@ -53,38 +55,11 @@ export const addProject = (project) => {
   };
 };
 
-export const addTask = (project) => {
+export const updateTasks = (project) => {
   return async dispatch => {
     try {
       const editedProject = await projectService.editTask(project);
-      dispatch({
-        type: 'CHANGE_TASK',
-        data: editedProject,
-      });
-    } catch (er) {
-      console.log(er);
-    }
-  };
-};
 
-export const removeTask = (project) => {
-  return async dispatch => {
-    try {
-      const editedProject = await projectService.editTask(project);
-      dispatch({
-        type: 'CHANGE_TASK',
-        data: editedProject,
-      });
-    } catch (er) {
-      console.log(er);
-    }
-  };
-};
-
-export const editProjectUsers = (project) => {
-  return async dispatch => {
-    try {
-      const editedProject = await projectService.editTask(project);
       dispatch({
         type: 'CHANGE_TASK',
         data: editedProject,
@@ -99,6 +74,7 @@ export const deleteProject = (project) => {
   return dispatch => {
     try {
       projectService.deleteProject(project);
+
       dispatch({
         type: 'DELETE_PROJECT',
         data: project.id,

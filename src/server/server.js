@@ -1,12 +1,12 @@
 // Server imports
-const config = require('./utils/config');
-const middleware = require('./utils/middleware');
-const logger = require('./utils/logger');
+import config from './utils/config';
+import middleware from './utils/middleware';
+import logger from './utils/logger';
 import express from 'express';
 const app = express();
 import bodyParser from 'body-parser';
 import cors from 'cors';
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 import userRouter from './controllers/users';
 import loginRouter from './controllers/login';
 import projectsRouter from './controllers/projects';
@@ -23,23 +23,19 @@ import indexHTML from '../public/index.html';
 
 mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true, useFindAndModify: false })
   .then(() => {
-    logger.info('connected to MongoDB');
+    logger.info('Connected to MongoDB 🐈');
   })
   .catch((error) => {
-    logger.error('error connection to MongoDB:', error.message);
+    logger.error('Connecting to MongoDB failed:', error.message);
   });
 
 app.use(cors());
-
-app.use(
-  express.static(
-    process.env.NODE_ENV === 'development' ?
-      'devBuild'
-      :
-      'build'
-  )
-);
-
+app.use(express.static(
+  process.env.NODE_ENV === 'development' ?
+    'devBuild'
+    :
+    'build'
+));
 app.use(bodyParser.json());
 app.use(middleware.requestLogger);
 app.use(middleware.getBearerToken);
@@ -54,7 +50,7 @@ app.get('*', (req, res) => {
 
   // Create the app with routes
   const appRoot = renderToString(
-    <Provider store={storeInit()}>
+    <Provider store={ storeInit() }>
       <StaticRouter location={req.url}>
         <App/>
       </StaticRouter>
@@ -72,9 +68,7 @@ app.get('*', (req, res) => {
 
 app.use(middleware.errorHandler);
 
-// Run server
+// Run server on port 3000
 const port = 3000;
-app.listen(port, err => {
-  if (err) return console.error(err);
-  console.log(`Server listening to port: ${port} 😎`);
-});
+app.listen( port, () => console.log(`Server is listening to port ${port} 😎`))
+  .on('error', err => { console.log(err); });

@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { register } from '../reducers/userReducer';
 
-const Register = (props) => {
-  const [userName, setUserName] = useState('');
-  const [name, setName] = useState('');
-  const [pass, setPass] = useState('');
+const Register = ( props ) => {
+  const [ userName, setUserName ] = useState('');
+  const [ name, setName ] = useState('');
+  const [ pass, setPass ] = useState('');
 
-  const handleChange = (e) => {
+  const handleInputChange = (e) => {
     if (e.target.name === 'username') {
       setUserName(e.target.value);
     } else if (e.target.name === 'password') {
@@ -17,7 +17,7 @@ const Register = (props) => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleRegister = (e) => {
     e.preventDefault();
 
     const obj = {
@@ -27,15 +27,18 @@ const Register = (props) => {
     };
 
     props.register(obj);
+
+    setPass('');
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <input value={userName} placeholder="username" type="text" name="username" onChange={handleChange} />
-        <input value={name} placeholder="name" type="text" name="name" onChange={handleChange} />
-        <input value={pass} placeholder="password" type="password" name="password" onChange={handleChange} />
-        <button>Reqister</button>
+    <div className="block">
+      <h3>Register</h3>
+      <form className="register" onSubmit={handleRegister}>
+        <input value={userName} placeholder="username" type="text" name="username" onChange={handleInputChange} />
+        <input value={name} placeholder="name" type="text" name="name" onChange={handleInputChange} />
+        <input value={pass} placeholder="password" type="password" name="password" onChange={handleInputChange} />
+        <button>Register</button>
       </form>
     </div>
   );
@@ -49,5 +52,7 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps,
-  { register }
-)(Register);
+  {
+    register
+  }
+)( Register );

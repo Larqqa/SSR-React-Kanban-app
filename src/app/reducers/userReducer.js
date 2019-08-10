@@ -4,14 +4,10 @@ import { getProjects, clearProjects } from './projectReducer';
 
 const userReducer = (state = {}, action) => {
   switch (action.type) {
-  case 'INIT':
-    return action.data;
-  case 'LOGIN':
+  case 'SET_USER':
     return action.data;
   case 'LOGOUT':
     return {};
-  case 'REGISTER':
-    return action.data;
   default:
     return state;
   }
@@ -28,9 +24,10 @@ export const initUser = (userInput) => {
   return async dispatch => {
     try{
       await userService.auth(userInput.token);
-      projectService.setToken(userInput.token);
+      await projectService.setToken(userInput.token);
+
       dispatch({
-        type: 'INIT',
+        type: 'SET_USER',
         data: userInput,
       });
     } catch (er) {
@@ -45,9 +42,10 @@ export const login = (userInput) => {
     try {
       const user = await userService.login(userInput);
       await addToLocal(user);
+
       dispatch(getProjects());
       dispatch({
-        type: 'LOGIN',
+        type: 'SET_USER',
         data: user,
       });
     } catch (er) {
@@ -57,7 +55,7 @@ export const login = (userInput) => {
 };
 
 export const logout = () => {
-  return async dispatch => {
+  return dispatch => {
     window.localStorage.clear();
     dispatch(clearProjects());
     dispatch({
@@ -70,9 +68,10 @@ export const register = (userInput) => {
   return async dispatch => {
     try{
       const user = await userService.register(userInput);
-      addToLocal(user);
+      await addToLocal(user);
+
       dispatch({
-        type: 'REGISTER',
+        type: 'SET_USER',
         data: user,
       });
     } catch (er) {

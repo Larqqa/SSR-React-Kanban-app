@@ -4,8 +4,9 @@ const copy = require('copy-webpack-plugin');
 
 const config = (env, argv) =>  {
   const dev = argv.mode === 'development';
-
   return {
+
+    // Map source files for better errors
     devtool: 'source-map',
     entry: './src/server/server.js',
     output: {
@@ -17,7 +18,7 @@ const config = (env, argv) =>  {
       __dirname: false,
       __filename: false,
     },
-    externals: [nodeExternals()],
+    externals: [ nodeExternals() ],
     module: {
       rules: [
         {
@@ -65,11 +66,13 @@ const config = (env, argv) =>  {
       ],
     },
     plugins: [
+
+      // Copy static index.html specific files to build folder
       new copy([
         {
           from: './src/public',
           to: path.join(__dirname, dev ? './devBuild' : './build'),
-          ignore: ['index.html'],
+          ignore: [ 'index.html' ],
         },
       ]),
     ],

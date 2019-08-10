@@ -6,8 +6,8 @@ import Login from './Login';
 import Register from './Register';
 import Projects from './sub-components/Projects';
 
-const Home = (props) => {
-  const handleSubmit = (e) => {
+const Home = ( props ) => {
+  const handleProjectSubmit = (e) => {
     e.preventDefault();
 
     const obj = {
@@ -23,12 +23,12 @@ const Home = (props) => {
   };
 
   return (
-    <div>
+    <div className="main">
       {props.user.username ?
         <>
-          <h1>{props.user.username}</h1>
+          <h2>Hello {props.user.username}</h2>
           <button onClick={handleLogout}>Logout</button>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleProjectSubmit}>
             <input name="title" />
             <input name="description" />
             <button>send</button>
@@ -54,5 +54,8 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps,
-  { addProject, logout }
-)(Home);
+  {
+    addProject,
+    logout
+  }
+)( Home );

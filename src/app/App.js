@@ -2,17 +2,18 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Switch } from 'react-router-dom';
 import { renderRoutes } from 'react-router-config';
-import routes, { NavLinks } from './Routes';
 import { initUser } from './reducers/userReducer';
 import { getProjects } from './reducers/projectReducer';
+import routes, { NavLinks } from './Routes';
 import './styles/App.scss';
 
-const App = (props) => {
+const App = ( props ) => {
   const init =  async () => {
-    const loggedIn = window.localStorage.getItem('USER');
-    if (loggedIn) {
-      const user = JSON.parse(loggedIn);
-      await props.initUser(user);
+    const loggedIn = window.localStorage.getItem( 'USER' );
+
+    if ( loggedIn ) {
+      const user = JSON.parse( loggedIn );
+      await props.initUser( user );
       props.getProjects();
     }
   };
@@ -22,16 +23,16 @@ const App = (props) => {
   }, []);
 
   return (
-    <div>
-      <NavLinks />
-      <Switch>
-        {renderRoutes(routes)}
-      </Switch>
-    </div>
+    <>
+      <header>
+        <NavLinks />
+      </header>
+      <Switch>{ renderRoutes( routes ) }</Switch>
+    </>
   );
 };
 
-const mapStateToProps = (state) => {
+const mapStateToProps = ( state ) => {
   return {
     user: state.user,
     projects: state.projects
@@ -40,5 +41,8 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps,
-  { initUser, getProjects }
-)(App);
+  {
+    initUser,
+    getProjects
+  }
+)( App );

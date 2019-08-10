@@ -3,36 +3,17 @@ const projectsRouter = require('express').Router();
 const Project = require('../models/project');
 const User = require('../models/user');
 
-projectsRouter.get('/', async (req, res, next) => {
-  const token = req.bearerToken;
-
-  try {
-    const decodedToken = jwt.verify(token, process.env.SECRET);
-    if (!token || !decodedToken.id) {
-      return res.status(401).json({ error: 'token missing or invalid' });
-    }
-
-    const projects = await Project
-      .find({$or:[{user: decodedToken.id}, {readAndWrite: decodedToken.id}, {read: decodedToken.id}]})
-      .populate('user', { username: 1, name: 1 })
-      .populate('read', { username: 1, name: 1 })
-      .populate('readAndWrite', { username: 1, name: 1 });
-
-    res.json(projects.map(project => project.toJSON()));
-  } catch (exception) {
-    next(exception);
+const decodeAuthToken = (req, res) => {
+  const decodedToken = jwt.verify(req.bearerToken, process.env.SECRET);
+  if (!req.bearerToken || !decodedToken.id) {
+    return res.status(401).json({ error: 'Token missing or invalid ☠️' });
   }
-});
+  return decodedToken;
+};
 
 projectsRouter.post('/', async (req, res, next) => {
-  const token = req.bearerToken;
-
   try {
-    const decodedToken = jwt.verify(token, process.env.SECRET);
-    if (!token || !decodedToken.id) {
-      return res.status(401).json({ error: 'token missing or invalid' });
-    }
-
+    const decodedToken = await decodeAuthToken(req, res);
     const user = await User.findById(decodedToken.id);
 
     const project = new Project({
@@ -41,35 +22,52 @@ projectsRouter.post('/', async (req, res, next) => {
       user: user._id
     });
 
+    // Create new project
     const newProject = await project.save();
 
+    // Populate user field for new project
     const popProject = await newProject
       .populate('user', { username: 1, name: 1 })
       .execPopulate();
 
+    // Add project id to users projects
     user.projects = user.projects.concat(popProject._id);
     await user.save();
 
-    res.json(popProject.toJSON());
-  } catch (exception) {
-    next(exception);
+    res.status(200).json(popProject.toJSON());
+  } catch (er) {
+    next(er);
+  }
+});
+
+projectsRouter.get('/', async (req, res, next) => {
+  try {
+    const decodedToken = await decodeAuthToken(req, res);
+
+    // Get all projects user is in
+    const projects = await Project
+      .find({ $or:[ { user: decodedToken.id }, { readAndWrite: decodedToken.id }, { read: decodedToken.id } ] })
+      .populate('user', { username: 1, name: 1 })
+      .populate('read', { username: 1, name: 1 })
+      .populate('readAndWrite', { username: 1, name: 1 });
+
+    // Respond with each project as JSON
+    res.status(200).json(projects.map(
+      project => project.toJSON()
+    ));
+  } catch (er) {
+    next(er);
   }
 });
 
 projectsRouter.put('/', async (req, res, next) => {
-  const token = req.bearerToken;
-
   try {
-    const decodedToken = jwt.verify(token, process.env.SECRET);
-    if (!token || !decodedToken.id) {
-      return res.status(401).json({ error: 'token missing or invalid' });
-    }
+    await decodeAuthToken(req, res);
 
+    // Sanitize request 
     const id = req.body.id;
     delete req.body.id;
     delete req.body.user;
-
-    console.log(req.body.progress.todo);
 
     const editedProject = await Project
       .findByIdAndUpdate(id, req.body, { new: true })
@@ -77,28 +75,22 @@ projectsRouter.put('/', async (req, res, next) => {
       .populate('read', { username: 1, name: 1 })
       .populate('readAndWrite', { username: 1, name: 1 })
       .exec();
-    
-    res.json(editedProject.toJSON());
-  } catch (ex) {
-    console.log(ex);
-    next(ex);
+
+    res.status(200).json(editedProject.toJSON());
+  } catch (er) {
+    next(er);
   }
 });
 
 projectsRouter.delete('/:id', async (req, res, next) => {
-  const token = req.bearerToken;
-
   try {
-    const decodedToken = jwt.verify(token, process.env.SECRET);
-    if (!token || !decodedToken.id) {
-      return res.status(401).json({ error: 'token missing or invalid' });
-    }
+    await decodeAuthToken(req, res);
 
     await Project.findByIdAndDelete(req.params.id);
 
     res.status(200);
-  } catch (exception) {
-    next(exception);
+  } catch (er) {
+    next(er);
   }
 });
 

@@ -2,47 +2,39 @@ const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 
 const projectSchema = mongoose.Schema({
-  title: {
-    type: String,
-    unique: true,
-  },
+  title: String,
   description: String,
   progress: {
     todo: [],
     inProg: [],
     done: [],
   },
-  read: [{
+  read: [ {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
-  }],
-  readAndWrite: [{
+  } ],
+  readAndWrite: [ {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
-  }],
+  } ],
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },
 });
 
+// Format id to be more usable & remove useless & sensitive info from response objects
 projectSchema.set('toJSON', {
   transform: (document, returnedObject) => {
-
-    // Format id to be more usable
     returnedObject.id = returnedObject._id.toString();
-
-    // Delete useless info
     delete returnedObject._id;
     delete returnedObject.__v;
-
-    // the passwordHash should not be revealed
     delete returnedObject.passwordHash;
   }
 });
 
 projectSchema.plugin(uniqueValidator);
 
-const User = mongoose.model('Project', projectSchema);
+const Project = mongoose.model('Project', projectSchema);
 
-module.exports = User;
+module.exports =  Project;

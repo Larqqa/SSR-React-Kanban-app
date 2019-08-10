@@ -1,5 +1,6 @@
 const logger = require('./logger');
 
+// Adds request info to server log
 const requestLogger = (req, res, next) => {
   logger.info('Method:', req.method);
   logger.info('Path:  ', req.path);
@@ -8,18 +9,19 @@ const requestLogger = (req, res, next) => {
   next();
 };
 
+// Custom error messages
 const errorHandler = (error, req, res, next) => {
   if (error.name === 'CastError' && error.kind === 'ObjectId') {
     return res.status(400).send({
-      error: 'malformatted id'
+      error: 'Malformatted ID ☠️'
     });
   } else if (error.name === 'ValidationError') {
     return res.status(400).json({
-      error: error.message
+      error: `${error.message}☠️`
     });
   } else if (error.name === 'JsonWebTokenError') {
     return res.status(401).json({
-      error: 'invalid token'
+      error: 'Invalid token ☠️'
     });
   }
 
@@ -28,6 +30,7 @@ const errorHandler = (error, req, res, next) => {
   next(error);
 };
 
+// Adds bearer token to request parameters
 const getBearerToken = (req, res, next) => {
   const authorization = req.get('authorization');
   if (authorization && authorization.toLowerCase().startsWith('bearer ')) {

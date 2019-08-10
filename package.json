@@ -1,10 +1,10 @@
 {
   "name": "kanban-app",
   "version": "0.0.1",
-  "description": "kanban style express and SSR react app",
+  "description": "kanban style Express and SSR React app",
   "license": "MIT",
   "scripts": {
-    "start": "cross-env NODE_ENV=production node build/server.js",
+    "start": "cross-env NODE_ENV=production npm run build && node build/server.js",
     "dev": "cross-env NODE_ENV=development npm-run-all devBuild:* && npm-run-all -p watch:*",
     "build": "rm -rf build && npm-run-all build:*",
     "build:server": "webpack --config=webpack.server.js --mode=production",
